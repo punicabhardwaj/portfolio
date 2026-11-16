@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Governance Document Suite · Punica Bhardwaj</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F5F0;
+  --paper-edge:#EAE6DC;
+  --chrome:#10231C;
+  --chrome-2:#163026;
+  --chrome-line:#27453A;
+  --ink:#1C2321;
+  --ink-soft:#4A524E;
+  --evergreen:#1E5A41;
+  --evergreen-soft:#E3EDE7;
+  --copper:#A66B1F;
+  --copper-soft:#F3E8D4;
+  --critical:#7A1F2B;
+  --high:#B23A3A;
+  --high-soft:#F5E2E2;
+  --med:#C07F1F;
+  --med-soft:#F6ECD8;
+  --low:#2F7D4F;
+  --low-soft:#E1EFE6;
+  --line:#D8D3C6;
+  --white:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Public Sans',system-ui,sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  font-size:15px;
+  line-height:1.65;
+}
+::selection{background:var(--copper-soft)}
+
+/* ---------- Chrome / layout ---------- */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:296px;flex-shrink:0;background:var(--chrome);color:#D9E2DD;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  display:flex;flex-direction:column;
+}
+.brand{padding:28px 24px 20px;border-bottom:1px solid var(--chrome-line)}
+.brand a{color:#9FB8AC;text-decoration:none;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.brand a:hover{color:#fff}
+.brand h1{font-family:'Spectral',serif;font-weight:600;font-size:21px;line-height:1.3;color:#fff;margin-top:10px}
+.brand p{font-size:12.5px;color:#8FA79B;margin-top:6px;line-height:1.5}
+.scenario{
+  margin:18px 20px 6px;padding:12px 14px;border:1px solid var(--chrome-line);
+  border-radius:6px;background:var(--chrome-2);font-size:12px;color:#A9BFB4;line-height:1.55;
+}
+.scenario strong{color:#E8C893;font-weight:600}
+nav.docs{padding:14px 12px 8px;flex:1}
+.nav-label{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#6E8A7D;padding:8px 12px 6px}
+.doc-link{
+  display:flex;gap:12px;align-items:baseline;width:100%;text-align:left;
+  background:none;border:none;color:#C7D4CD;cursor:pointer;
+  padding:10px 12px;border-radius:6px;font-family:inherit;font-size:13.5px;line-height:1.4;
+}
+.doc-link .num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6E8A7D;flex-shrink:0;width:52px}
+.doc-link:hover{background:var(--chrome-2);color:#fff}
+.doc-link.active{background:var(--evergreen);color:#fff}
+.doc-link.active .num{color:#BFE0C8}
+.sidebar-foot{padding:18px 24px 24px;border-top:1px solid var(--chrome-line);font-size:11.5px;color:#7E978B;line-height:1.6}
+.sidebar-foot a{color:#C7D4CD}
+
+.main{flex:1;min-width:0}
+.topbar{
+  position:sticky;top:0;z-index:5;background:rgba(247,245,240,.92);backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;gap:16px;
+  padding:12px 36px;
+}
+.crumb{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft)}
+.crumb b{color:var(--evergreen);font-weight:600}
+.print-btn{
+  font-family:'Public Sans',sans-serif;font-size:12.5px;font-weight:600;
+  border:1px solid var(--evergreen);color:var(--evergreen);background:none;
+  padding:7px 14px;border-radius:6px;cursor:pointer;
+}
+.print-btn:hover{background:var(--evergreen);color:#fff}
+
+/* ---------- Document sheet ---------- */
+.sheet-wrap{padding:36px 36px 80px;display:flex;justify-content:center}
+.sheet{
+  background:var(--white);max-width:880px;width:100%;
+  border:1px solid var(--paper-edge);border-radius:4px;
+  box-shadow:0 1px 2px rgba(28,35,33,.05),0 14px 40px -18px rgba(28,35,33,.18);
+  padding:56px 64px 64px;
+}
+.doc-section{display:none}
+.doc-section.visible{display:block}
+
+/* Control block: the signature element */
+.control{
+  border:1.5px solid var(--ink);margin-bottom:36px;
+  font-size:12.5px;
+}
+.control-top{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:20px;
+  padding:16px 20px;border-bottom:1.5px solid var(--ink);
+}
+.control-top .org{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.control-top h2{font-family:'Spectral',serif;font-weight:600;font-size:25px;line-height:1.25;margin-top:6px}
+.stamp{
+  flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  border:2px solid var(--evergreen);color:var(--evergreen);
+  padding:6px 10px;border-radius:3px;transform:rotate(2deg);white-space:nowrap;
+}
+.stamp.draft{border-color:var(--copper);color:var(--copper)}
+.control-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.control-grid>div{padding:10px 14px;border-right:1px solid var(--line)}
+.control-grid>div:last-child{border-right:none}
+.control-grid>div:nth-child(n+5){border-top:1px solid var(--line)}
+.control-grid .k{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:2px}
+.control-grid .v{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500}
+
+/* Document typography */
+.doc-section h3{
+  font-family:'Spectral',serif;font-weight:600;font-size:19px;
+  margin:38px 0 12px;padding-top:14px;border-top:1px solid var(--line);
+  display:flex;gap:14px;align-items:baseline;
+}
+.doc-section h3 .sn{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--copper);font-weight:600;flex-shrink:0}
+.doc-section h4{font-size:14.5px;font-weight:700;margin:22px 0 8px}
+.doc-section p{margin:0 0 14px;color:var(--ink)}
+.doc-section ul,.doc-section ol{margin:0 0 16px 22px}
+.doc-section li{margin-bottom:7px}
+.muted{color:var(--ink-soft);font-size:13.5px}
+.lede{font-size:16px;line-height:1.7;color:var(--ink)}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:14px 0 22px;font-size:13px}
+th{
+  text-align:left;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-soft);font-weight:600;padding:8px 10px;border-bottom:2px solid var(--ink);
+  background:var(--paper);
+}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+tr:hover td{background:#FCFBF8}
+.mono{font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+td.mono{white-space:nowrap}
+.tight td{padding:7px 10px}
+
+/* Pills & tiers */
+.pill{
+  display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 9px;border-radius:99px;white-space:nowrap;
+}
+.t-crit{background:var(--critical);color:#fff}
+.t-high{background:var(--high-soft);color:var(--high);border:1px solid var(--high)}
+.t-med{background:var(--med-soft);color:#8A5A12;border:1px solid var(--med)}
+.t-low{background:var(--low-soft);color:var(--low);border:1px solid var(--low)}
+.t-info{background:var(--evergreen-soft);color:var(--evergreen);border:1px solid var(--evergreen)}
+.t-paused{background:#EEE;color:#555;border:1px solid #999}
+
+/* Callouts */
+.note{
+  border-left:3px solid var(--evergreen);background:var(--evergreen-soft);
+  padding:14px 18px;border-radius:0 6px 6px 0;margin:18px 0;font-size:13.5px;
+}
+.note.amber{border-color:var(--copper);background:var(--copper-soft)}
+.note b{font-weight:700}
+
+/* Framework map chips */
+.fw{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.fw span{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;
+  border:1px solid var(--line);background:var(--paper);
+  padding:4px 10px;border-radius:4px;color:var(--ink-soft);
+}
+
+/* Risk heat map */
+.heat{display:grid;grid-template-columns:90px repeat(5,1fr);gap:3px;margin:18px 0 6px;font-size:11px}
+.heat .axis{display:flex;align-items:center;justify-content:flex-end;padding-right:10px;color:var(--ink-soft);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+.heat .cell{
+  position:relative;min-height:52px;border-radius:3px;padding:4px 5px;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(28,35,33,.45);
+}
+.heat .cell .ids{position:absolute;inset:auto 5px 5px 5px;color:var(--ink);font-weight:700;line-height:1.5}
+.h-g{background:#DCEDE2}.h-y{background:#F4E7C8}.h-o{background:#F1D3B6}.h-r{background:#ECC0C0}.h-rr{background:#E0A4A4}
+.heat-x{display:grid;grid-template-columns:90px repeat(5,1fr);gap:3px;font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;text-align:center;margin-bottom:20px}
+
+/* Intro page */
+.intro-hero{margin-bottom:8px}
+.intro-hero .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--copper);font-weight:600}
+.intro-hero h2{font-family:'Spectral',serif;font-weight:600;font-size:34px;line-height:1.2;margin:12px 0 16px}
+.toc{margin-top:28px;border-top:2px solid var(--ink)}
+.toc-row{
+  display:grid;grid-template-columns:64px 1fr auto;gap:18px;align-items:baseline;
+  padding:16px 4px;border-bottom:1px solid var(--line);cursor:pointer;
+}
+.toc-row:hover{background:#FCFBF8}
+.toc-row .num{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--copper);font-weight:600}
+.toc-row .t{font-family:'Spectral',serif;font-size:17.5px;font-weight:600}
+.toc-row .d{font-size:13px;color:var(--ink-soft);margin-top:3px;font-family:'Public Sans',sans-serif;font-weight:400}
+.toc-row .open{font-size:12.5px;font-weight:600;color:var(--evergreen);white-space:nowrap}
+
+/* Responsive */
+@media (max-width:980px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:static}
+  nav.docs{display:flex;overflow-x:auto;gap:4px;padding:10px 12px}
+  .nav-label{display:none}
+  .doc-link{flex-shrink:0;white-space:nowrap}
+  .doc-link .num{width:auto}
+  .scenario,.sidebar-foot{display:none}
+  .sheet{padding:30px 22px 40px}
+  .sheet-wrap{padding:18px 12px 60px}
+  .topbar{padding:10px 16px}
+  .control-grid{grid-template-columns:repeat(2,1fr)}
+  .control-grid>div:nth-child(n+3){border-top:1px solid var(--line)}
+  .control-grid>div:nth-child(2n){border-right:none}
+  .control-grid>div:nth-child(2n+1){border-right:1px solid var(--line)}
+  .heat .cell{min-height:42px}
+  table{display:block;overflow-x:auto}
+}
+@media print{
+  .sidebar,.topbar{display:none}
+  .sheet{box-shadow:none;border:none;padding:0;max-width:100%}
+  .sheet-wrap{padding:0}
+  body{background:#fff}
+  .doc-section{display:none}
+  .doc-section.visible{display:block}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.doc-link:focus-visible,.print-btn:focus-visible,.toc-row:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <div class="brand">
+    <a href="https://punicabhardwaj.github.io/portfolio/">← punicabhardwaj.github.io</a>
+    <h1>AI Governance<br>Document Suite</h1>
+    <p>The operating documents of an AI governance program I designed end to end, from intake gate to incident response. Punica Bhardwaj.</p>
+  </div>
+  <div class="scenario">
+    <strong>Demonstration scenario.</strong> Evergreen Mutual Bank is a fictional mid-size US bank with an EU subsidiary, created to show this work product realistically. All data is synthetic.
+  </div>
+  <nav class="docs" aria-label="Documents">
+    <div class="nav-label">Document register</div>
+    <button class="doc-link active" data-doc="intro"><span class="num">INDEX</span><span>Suite overview</span></button>
+    <button class="doc-link" data-doc="d1"><span class="num">DOC-01</span><span>AI System Inventory</span></button>
+    <button class="doc-link" data-doc="d2"><span class="num">DOC-02</span><span>AI Risk Assessment</span></button>
+    <button class="doc-link" data-doc="d3"><span class="num">DOC-03</span><span>Enterprise AI Policy</span></button>
+    <button class="doc-link" data-doc="d4"><span class="num">DOC-04</span><span>Model Card</span></button>
+    <button class="doc-link" data-doc="d5"><span class="num">DOC-05</span><span>AI Incident Response Plan</span></button>
+  </nav>
+  <div class="sidebar-foot">
+    Pairs with my four working governance tools: <a href="https://punicabhardwaj.github.io/portfolio/#governance">intake classifier, agent console, fairness audit, vendor scorecard</a>.
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="crumb" id="crumb"><b>EMB-GOV</b> / Suite overview</div>
+    <button class="print-btn" onclick="window.print()">Print / save as PDF</button>
+  </div>
+  <div class="sheet-wrap">
+    <div class="sheet">
+
+<!-- ============ INTRO ============ -->
+<section class="doc-section visible" id="intro">
+  <div class="intro-hero">
+    <div class="eyebrow">Portfolio · Governance work product</div>
+    <h2>One AI system, governed end to end.</h2>
+    <p class="lede">Anyone can list frameworks. This suite is the paper spine of a governance program I designed end to end: the decision rights, the gates, the documents, and the triggers that connect them. Every artifact below covers the same fictional institution, Evergreen Mutual Bank, and traces a single high-risk system, a credit decisioning model called <b>CreditSense</b>, through inventory, assessment, policy, documentation, and incident response.</p>
+    <p>The documents cross-reference each other the way a real governance program does. The inventory feeds the risk assessment. The risk assessment cites policy controls. The model card operationalizes fairness thresholds. The incident response plan defines what happens when monitoring in the model card trips a limit.</p>
+    <div class="fw">
+      <span>NIST AI RMF 1.0</span><span>EU AI Act</span><span>ISO/IEC 42001:2023</span><span>SR 11-7 (Fed model risk)</span><span>ECOA / Reg B</span><span>GDPR Art. 33</span>
+    </div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-row" data-doc="d1" tabindex="0" role="button">
+      <span class="num">DOC-01</span>
+      <span><span class="t">AI System Inventory</span><div class="d">Enterprise register of eight AI systems with risk tiering, EU AI Act classification, owners, and lifecycle status.</div></span>
+      <span class="open">Open →</span>
+    </div>
+    <div class="toc-row" data-doc="d2" tabindex="0" role="button">
+      <span class="num">DOC-02</span>
+      <span><span class="t">AI Risk Assessment</span><div class="d">Full assessment of CreditSense: inherent and residual risk scoring, 5×5 heat map, and a remediation plan with owners.</div></span>
+      <span class="open">Open →</span>
+    </div>
+    <div class="toc-row" data-doc="d3" tabindex="0" role="button">
+      <span class="num">DOC-03</span>
+      <span><span class="t">Enterprise AI Policy</span><div class="d">Board-approved policy: three lines of defense, tier-based lifecycle controls, GenAI rules, and an ISO 42001 clause map.</div></span>
+      <span class="open">Open →</span>
+    </div>
+    <div class="toc-row" data-doc="d4" tabindex="0" role="button">
+      <span class="num">DOC-04</span>
+      <span><span class="t">Model Card · CreditSense v3.2</span><div class="d">Intended use, training data, performance by segment, fairness results against the 4/5ths rule, and adverse action reason codes.</div></span>
+      <span class="open">Open →</span>
+    </div>
+    <div class="toc-row" data-doc="d5" tabindex="0" role="button">
+      <span class="num">DOC-05</span>
+      <span><span class="t">AI Incident Response Plan</span><div class="d">AI-specific severity matrix, six incident playbook triggers, kill-switch authority, and regulatory notification clocks.</div></span>
+      <span class="open">Open →</span>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:30px">
+    <b>How to read this suite.</b> Hiring managers: DOC-02 and DOC-04 show analytical depth. Auditors: start with DOC-03 section 4 and trace any control into the other documents. Everyone else: DOC-01 is the map.
+  </div>
+</section>
+
+<!-- ============ DOC-01 INVENTORY ============ -->
+<section class="doc-section" id="d1">
+  <div class="control">
+    <div class="control-top">
+      <div>
+        <div class="org">Evergreen Mutual Bank · AI Governance Office</div>
+        <h2>Enterprise AI System Inventory</h2>
+      </div>
+      <div class="stamp">CONTROLLED · Q2 2026</div>
+    </div>
+    <div class="control-grid">
+      <div><span class="k">Document ID</span><span class="v">EMB-GOV-INV-001</span></div>
+      <div><span class="k">Version</span><span class="v">4.1</span></div>
+      <div><span class="k">Owner</span><span class="v">AI Governance Office</span></div>
+      <div><span class="k">Classification</span><span class="v">Internal</span></div>
+      <div><span class="k">Approved by</span><span class="v">AI Governance Cmte.</span></div>
+      <div><span class="k">Effective</span><span class="v">2026-04-01</span></div>
+      <div><span class="k">Next review</span><span class="v">2026-07-01</span></div>
+      <div><span class="k">Policy basis</span><span class="v">POL-AI-001 §5.1</span></div>
+    </div>
+  </div>
+
+  <h3><span class="sn">1.0</span>Purpose and scope</h3>
+  <p>This inventory is the authoritative register of every AI and machine learning system developed, procured, or operated by Evergreen Mutual Bank and its EU subsidiary (Evergreen Europe DAC, Dublin). Per POL-AI-001 §5.1, no AI system may move past pilot without an inventory entry, an assigned accountable owner, and a completed risk tier classification. The inventory satisfies NIST AI RMF <span class="mono">MAP 1.1</span> and <span class="mono">GOVERN 1.6</span>, ISO/IEC 42001 control <span class="mono">A.4 (AI system inventory)</span>, and the deployer obligations of EU AI Act Article 26 for systems operated in the EU.</p>
+  <p class="muted">Maintained by the AI Governance Office. Updated within 10 business days of any lifecycle change. Reconciled quarterly against the model risk register held by second-line Model Risk Management (MRM).</p>
+
+  <h3><span class="sn">2.0</span>Tiering legend</h3>
+  <table class="tight">
+    <tr><th style="width:120px">Internal tier</th><th>Definition</th><th style="width:200px">Minimum lifecycle controls</th></tr>
+    <tr><td><span class="pill t-high">Tier 1 · High</span></td><td>Consequential effect on customers' access to credit, employment, money, or accounts; or any EU AI Act high-risk classification.</td><td>Full risk assessment, MRM validation, fairness audit, model card, annual review, IRP coverage</td></tr>
+    <tr><td><span class="pill t-med">Tier 2 · Medium</span></td><td>Material operational or reputational impact; limited direct customer harm; EU AI Act limited-risk transparency duties may apply.</td><td>Streamlined assessment, monitoring plan, transparency disclosures, biennial review</td></tr>
+    <tr><td><span class="pill t-low">Tier 3 · Low</span></td><td>Internal productivity or back-office use with human review of all outputs.</td><td>Inventory entry, acceptable-use attestation, vendor review if procured</td></tr>
+  </table>
+
+  <h3><span class="sn">3.0</span>Active register</h3>
+  <table>
+    <tr><th>ID</th><th>System</th><th>Function</th><th>Type / source</th><th>Tier</th><th>EU AI Act</th><th>Owner</th><th>Status</th></tr>
+    <tr>
+      <td class="mono">AIS-001</td>
+      <td><b>CreditSense v3.2</b></td>
+      <td>Consumer credit decisioning (personal loans, cards)</td>
+      <td>Gradient-boosted ensemble · In-house</td>
+      <td><span class="pill t-high">Tier 1</span></td>
+      <td>High risk · Annex III 5(b)</td>
+      <td>VP Consumer Lending</td>
+      <td>Production · See <span class="mono">RA-2026-014</span>, <span class="mono">MC-CS-32</span></td>
+    </tr>
+    <tr>
+      <td class="mono">AIS-002</td>
+      <td>FraudGuard</td>
+      <td>Real-time card fraud detection and transaction blocking</td>
+      <td>Ensemble + rules · In-house</td>
+      <td><span class="pill t-high">Tier 1</span></td>
+      <td>Out of Annex III scope (fraud-detection carve-out, Art. 6(3) context)</td>
+      <td>Head of Fraud Ops</td>
+      <td>Production</td>
+    </tr>
+    <tr>
+      <td class="mono">AIS-003</td>
+      <td>Aria</td>
+      <td>Customer service chatbot (servicing, FAQs; no advice)</td>
+      <td>Hosted LLM · Vendor (RAG over approved KB)</td>
+      <td><span class="pill t-med">Tier 2</span></td>
+      <td>Limited risk · Art. 50 disclosure required</td>
+      <td>Dir. Digital Channels</td>
+      <td>Production</td>
+    </tr>
+    <tr>
+      <td class="mono">AIS-004</td>
+      <td>TalentScreen</td>
+      <td>Resume screening for high-volume roles</td>
+      <td>Vendor SaaS classifier</td>
+      <td><span class="pill t-high">Tier 1</span></td>
+      <td>High risk · Annex III 4(a)</td>
+      <td>CHRO</td>
+      <td><span class="pill t-paused">Paused</span> pending fairness audit remediation</td>
+    </tr>
+    <tr>
+      <td class="mono">AIS-005</td>
+      <td>SentinelAML</td>
+      <td>AML transaction monitoring and SAR case scoring</td>
+      <td>Anomaly detection · In-house</td>
+      <td><span class="pill t-high">Tier 1</span></td>
+      <td>Not in EU scope (US entity only)</td>
+      <td>BSA/AML Officer</td>
+      <td>Production · SR 11-7 validated</td>
+    </tr>
+    <tr>
+      <td class="mono">AIS-006</td>
+      <td>DocExtract</td>
+      <td>OCR and field extraction from loan documents</td>
+      <td>Vision model · Vendor API</td>
+      <td><span class="pill t-low">Tier 3</span></td>
+      <td>Minimal risk</td>
+      <td>Dir. Loan Operations</td>
+      <td>Production · 100% human verification</td>
+    </tr>
+    <tr>
+      <td class="mono">AIS-007</td>
+      <td>NextBest</td>
+      <td>Marketing propensity scoring for product offers</td>
+      <td>Logistic regression · In-house</td>
+      <td><span class="pill t-low">Tier 3</span></td>
+      <td>Minimal risk</td>
+      <td>CMO</td>
+      <td>Production · Excluded from pricing decisions</td>
+    </tr>
+    <tr>
+      <td class="mono">AIS-008</td>
+      <td>OpsAgent</td>
+      <td>Internal agentic assistant for back-office workflows</td>
+      <td>LLM agent w/ tool access · Hybrid</td>
+      <td><span class="pill t-med">Tier 2</span></td>
+      <td>Under classification review</td>
+      <td>COO (interim)</td>
+      <td>Pilot · Runtime controls per agent governance standard; kill switch tested 2026-05-12</td>
+    </tr>
+  </table>
+
+  <div class="note">
+    <b>Classification judgment calls are documented, not assumed.</b> FraudGuard sits outside Annex III because fraud detection in financial services is expressly carved out of the creditworthiness category; the rationale memo is filed with Legal. TalentScreen, by contrast, is squarely Annex III 4(a) employment screening, which is why its disparate impact finding (selection-rate ratio 0.74 for one protected group, below the 0.80 threshold of the EEOC 4/5ths rule) triggered an immediate pause under POL-AI-001 §7.3 rather than a waiver.
+  </div>
+
+  <h3><span class="sn">4.0</span>Decommissioned and rejected systems</h3>
+  <table class="tight">
+    <tr><th>ID</th><th>System</th><th>Outcome</th><th>Rationale</th></tr>
+    <tr><td class="mono">AIS-X09</td><td>VoiceMatch</td><td>Rejected at intake, 2025-11</td><td>Proposed voice-stress scoring in collections calls; emotion-inference use case posed unacceptable risk and likely EU AI Act Article 5 exposure.</td></tr>
+    <tr><td class="mono">AIS-X03</td><td>CreditSense v2.x</td><td>Retired 2025-08</td><td>Superseded by v3.x after validation found unstable performance on thin-file applicants. Artifacts archived 7 years per retention schedule.</td></tr>
+  </table>
+  <p class="muted">A rejected-systems log is deliberate: it evidences that the intake gate (POL-AI-001 §6.1) declines work, a governance function that has never declined anything has not been tested.</p>
+</section>
+<!-- ============ DOC-02 RISK ASSESSMENT ============ -->
+<section class="doc-section" id="d2">
+  <div class="control">
+    <div class="control-top">
+      <div>
+        <div class="org">Evergreen Mutual Bank · AI Governance Office</div>
+        <h2>AI Risk Assessment · CreditSense v3.2</h2>
+      </div>
+      <div class="stamp">APPROVED W/ CONDITIONS</div>
+    </div>
+    <div class="control-grid">
+      <div><span class="k">Document ID</span><span class="v">EMB-RA-2026-014</span></div>
+      <div><span class="k">Version</span><span class="v">2.0</span></div>
+      <div><span class="k">Assessed system</span><span class="v">AIS-001</span></div>
+      <div><span class="k">Assessor</span><span class="v">AI Risk Manager</span></div>
+      <div><span class="k">Reviewed by</span><span class="v">MRM (2nd line)</span></div>
+      <div><span class="k">Approved</span><span class="v">2026-03-18</span></div>
+      <div><span class="k">Reassessment due</span><span class="v">2027-03-18</span></div>
+      <div><span class="k">Methodology</span><span class="v">NIST AI RMF + SR 11-7</span></div>
+    </div>
+  </div>
+
+  <h3><span class="sn">1.0</span>Executive summary</h3>
+  <p class="lede">CreditSense v3.2 automates approve/decline/refer decisions and line assignment for unsecured consumer credit. It is the bank's highest-exposure AI system: roughly 38,000 decisions per month, direct effect on customers' access to credit, ECOA/Regulation B adverse action obligations in the US, and EU AI Act high-risk obligations through Evergreen Europe DAC. Aggregate inherent risk is rated <b>High</b>, anchored by R-01 at the matrix maximum (25/25). With the control set described in section 5, the highest residual score is <b>10/25 (Medium)</b>, within the risk appetite the Board approved for Tier 1 lending models, subject to three conditions tracked in section 6.</p>
+
+  <h3><span class="sn">2.0</span>Scope and methodology</h3>
+  <p>The assessment covers the production scoring pipeline, the policy-rule overlay, the adverse action reason-code generator, upstream credit bureau and bank-internal data feeds, and the human refer-queue workflow. It excludes collections strategy models (assessed separately as AIS-005 adjacent scope).</p>
+  <ul>
+    <li><b>Framing:</b> NIST AI RMF MAP function workshops with first-line owners, compliance, fair lending, and data engineering (MAP 1.1, 1.5, 3.4).</li>
+    <li><b>Measurement:</b> quantitative testing per the MEASURE function: discrimination testing, stability analysis, challenger benchmarking, and adversarial review of the application channel (MEASURE 2.6, 2.11).</li>
+    <li><b>Scoring:</b> 5×5 likelihood × impact scale; inherent scored without controls, residual scored with verified controls only. Verification by second-line MRM consistent with SR 11-7 effective challenge.</li>
+    <li><b>EU overlay:</b> Article 9 risk management, Article 10 data governance, Article 13 transparency, Article 14 human oversight requirements mapped for the EU deployment.</li>
+  </ul>
+
+  <h3><span class="sn">3.0</span>Risk register</h3>
+  <table>
+    <tr><th>ID</th><th>Risk</th><th>Category</th><th>Inherent</th><th>Key controls</th><th>Residual</th></tr>
+    <tr><td class="mono">R-01</td><td>Disparate impact in approval rates against protected classes, including via proxy features (e.g., geography correlating with race)</td><td>Fairness / legal</td><td><span class="pill t-crit">25</span></td><td>Quarterly fairness audit (DIR ≥ 0.90 internal trigger, hard floor 0.80); proxy scan on all 87 features at each retrain; fair lending sign-off gate</td><td><span class="pill t-med">10</span></td></tr>
+    <tr><td class="mono">R-02</td><td>Inaccurate or non-specific adverse action reasons breaching ECOA / Reg B</td><td>Regulatory</td><td><span class="pill t-high">20</span></td><td>SHAP-derived reason codes validated against Reg B sample notices; quarterly compliance review of 200 declined files</td><td><span class="pill t-low">6</span></td></tr>
+    <tr><td class="mono">R-03</td><td>Population drift degrades performance on thin-file and recent-immigrant segments (known v2.x failure mode)</td><td>Model performance</td><td><span class="pill t-high">16</span></td><td>PSI monitoring on top-20 features (alert &gt; 0.10, action &gt; 0.25); monthly segment-level AUC report; auto-escalation to IRP-AI-001 on breach</td><td><span class="pill t-med">8</span></td></tr>
+    <tr><td class="mono">R-04</td><td>Refer-queue analysts rubber-stamp model output (automation bias), hollowing out human oversight</td><td>Human oversight</td><td><span class="pill t-high">16</span></td><td>Overrides and agreement rates tracked per analyst; blind re-review sample (5%); oversight effectiveness metric reported to AIGC (EU AI Act Art. 14)</td><td><span class="pill t-med">9</span></td></tr>
+    <tr><td class="mono">R-05</td><td>Bureau data quality incidents (stale tradelines, mismatched files) propagate into decisions</td><td>Data governance</td><td><span class="pill t-high">15</span></td><td>Inbound data contracts with reject thresholds; lineage documented in catalog; bureau SLA with defect credits; EU AI Act Art. 10 data governance file</td><td><span class="pill t-med">8</span></td></tr>
+    <tr><td class="mono">R-06</td><td>Application-channel manipulation (coached inputs, synthetic identities) games the score</td><td>Security / adversarial</td><td><span class="pill t-med">12</span></td><td>Velocity and consistency checks pre-score; synthetic-ID model upstream; quarterly red-team of manipulable features</td><td><span class="pill t-low">6</span></td></tr>
+    <tr><td class="mono">R-07</td><td>Undocumented model change deployed without validation (change management failure)</td><td>Model risk</td><td><span class="pill t-med">12</span></td><td>Registry-enforced deployment (no model ships without MRM ticket); immutable model versioning; segregation of duties between dev and deploy</td><td><span class="pill t-low">4</span></td></tr>
+    <tr><td class="mono">R-08</td><td>EU conformity gap: documentation or logging falls short of Annex IV technical file expectations</td><td>Regulatory (EU)</td><td><span class="pill t-med">12</span></td><td>Technical documentation pack maintained per release; automatic decision logging retained 5 years; Art. 26 deployer checklist owned by EU compliance</td><td><span class="pill t-low">6</span></td></tr>
+    <tr><td class="mono">R-09</td><td>Explainability artifacts diverge from actual model behavior after retrain</td><td>Transparency</td><td><span class="pill t-med">9</span></td><td>Reason-code fidelity test in release pipeline; model card (MC-CS-32) regenerated and re-approved at every minor version</td><td><span class="pill t-low">4</span></td></tr>
+    <tr><td class="mono">R-10</td><td>Key-person dependency: two engineers hold effective knowledge of feature pipeline</td><td>Operational</td><td><span class="pill t-med">9</span></td><td>Runbook coverage audit; cross-training plan; pipeline-as-code with peer review</td><td><span class="pill t-low">6</span></td></tr>
+  </table>
+
+  <h3><span class="sn">4.0</span>Residual risk heat map</h3>
+  <p class="muted">Cells show risk IDs at their residual position; every score in the register equals impact × likelihood on this matrix. Movement from inherent position is reflected in the register above.</p>
+  <div class="heat" role="img" aria-label="Five by five residual risk heat map">
+    <div class="axis">Severe</div><div class="cell h-y"></div><div class="cell h-o"><div class="ids">R-01</div></div><div class="cell h-r"></div><div class="cell h-rr"></div><div class="cell h-rr"></div>
+    <div class="axis">Major</div><div class="cell h-y"></div><div class="cell h-o"><div class="ids">R-03 · R-05</div></div><div class="cell h-o"></div><div class="cell h-r"></div><div class="cell h-rr"></div>
+    <div class="axis">Moderate</div><div class="cell h-g"></div><div class="cell h-y"><div class="ids">R-02 · R-06 · R-08 · R-10</div></div><div class="cell h-y"><div class="ids">R-04</div></div><div class="cell h-o"></div><div class="cell h-r"></div>
+    <div class="axis">Minor</div><div class="cell h-g"></div><div class="cell h-g"><div class="ids">R-07 · R-09</div></div><div class="cell h-y"></div><div class="cell h-y"></div><div class="cell h-o"></div>
+    <div class="axis">Negligible</div><div class="cell h-g"></div><div class="cell h-g"></div><div class="cell h-g"></div><div class="cell h-y"></div><div class="cell h-y"></div>
+  </div>
+  <div class="heat-x"><div></div><div>Rare</div><div>Unlikely</div><div>Possible</div><div>Likely</div><div>Almost certain</div></div>
+
+  <h3><span class="sn">5.0</span>Control environment summary</h3>
+  <p>Controls cluster into four layers, each owned by a named function and each testable by Internal Audit:</p>
+  <ol>
+    <li><b>Pre-deployment gates:</b> intake classification, MRM independent validation, fairness audit, and fair lending legal sign-off. No gate may be waived for Tier 1 systems (POL-AI-001 §7.3).</li>
+    <li><b>Runtime monitoring:</b> drift (PSI), performance by segment, fairness metrics, override rates, and reason-code fidelity, with thresholds wired to the incident plan (IRP-AI-001 §3).</li>
+    <li><b>Human oversight:</b> a staffed refer queue with measured effectiveness, not assumed effectiveness; analysts can decline to follow the model and their dissent is a tracked signal.</li>
+    <li><b>Change and documentation discipline:</b> versioned models, regenerated model cards, and an EU technical file that updates with the system rather than after it.</li>
+  </ol>
+
+  <h3><span class="sn">6.0</span>Findings and conditions of approval</h3>
+  <table class="tight">
+    <tr><th>#</th><th>Condition</th><th>Owner</th><th>Due</th><th>Status</th></tr>
+    <tr><td class="mono">C-1</td><td>Raise refer-queue blind re-review sample from 5% to 10% until override-quality metric stabilizes for two consecutive quarters (addresses R-04).</td><td>VP Consumer Lending</td><td class="mono">2026-07-31</td><td><span class="pill t-med">Open</span></td></tr>
+    <tr><td class="mono">C-2</td><td>Complete proxy-feature deep dive on the three geography-derived features flagged in the Q1 fairness audit; remove or constrain any feature with unjustified protected-class correlation (addresses R-01).</td><td>Head of Data Science</td><td class="mono">2026-08-29</td><td><span class="pill t-med">Open</span></td></tr>
+    <tr><td class="mono">C-3</td><td>Close the runbook gap on the feature pipeline and certify a third engineer (addresses R-10).</td><td>Dir. ML Engineering</td><td class="mono">2026-06-30</td><td><span class="pill t-low">On track</span></td></tr>
+  </table>
+  <div class="note amber"><b>Standing position.</b> If the quarterly fairness audit reports a disparate impact ratio below 0.80 for any protected class on any product, CreditSense is removed from automated decisioning for that product the same day, per IRP-AI-001 playbook PB-2. That trigger is not discretionary.</div>
+</section>
+<!-- ============ DOC-03 AI POLICY ============ -->
+<section class="doc-section" id="d3">
+  <div class="control">
+    <div class="control-top">
+      <div>
+        <div class="org">Evergreen Mutual Bank · Board-approved policy</div>
+        <h2>Enterprise Artificial Intelligence Policy</h2>
+      </div>
+      <div class="stamp">BOARD APPROVED</div>
+    </div>
+    <div class="control-grid">
+      <div><span class="k">Document ID</span><span class="v">POL-AI-001</span></div>
+      <div><span class="k">Version</span><span class="v">3.0</span></div>
+      <div><span class="k">Owner</span><span class="v">Chief Risk Officer</span></div>
+      <div><span class="k">Approver</span><span class="v">Board Risk Cmte.</span></div>
+      <div><span class="k">Effective</span><span class="v">2026-01-15</span></div>
+      <div><span class="k">Review cycle</span><span class="v">Annual</span></div>
+      <div><span class="k">Applies to</span><span class="v">All entities incl. EU</span></div>
+      <div><span class="k">Supersedes</span><span class="v">v2.1 (2025-01)</span></div>
+    </div>
+  </div>
+
+  <h3><span class="sn">1.0</span>Purpose</h3>
+  <p>This policy establishes how Evergreen Mutual Bank develops, procures, deploys, monitors, and retires artificial intelligence so that AI use remains within Board-approved risk appetite, complies with applicable law, and is defensible to regulators, auditors, and customers. It implements an AI management system consistent with ISO/IEC 42001 and operationalizes the NIST AI RMF GOVERN function.</p>
+
+  <h3><span class="sn">2.0</span>Scope and definitions</h3>
+  <p><b>In scope:</b> any system that uses machine learning, statistical learning, or generative models to produce predictions, content, recommendations, or decisions affecting the bank, its customers, or its employees, whether built, bought, or embedded in vendor products. Embedded AI features in procured software are in scope at the moment they are enabled.</p>
+  <p><b>AI system:</b> defined per EU AI Act Article 3(1) for EU operations and per this policy's functional definition elsewhere. <b>Consequential decision:</b> a decision materially affecting a person's access to credit, employment, accounts, or funds. <b>Generative AI:</b> models producing text, code, images, or audio, including third-party assistants.</p>
+
+  <h3><span class="sn">3.0</span>Principles</h3>
+  <ol>
+    <li><b>Accountability is human.</b> Every AI system has one named accountable executive owner. "The model decided" is never an accepted explanation.</li>
+    <li><b>Proportionality.</b> Control depth scales with the risk tier defined in §5, so low-risk uses move fast and high-risk uses move carefully.</li>
+    <li><b>No unmonitored consequential decisions.</b> Tier 1 systems require measured, effective human oversight, not nominal oversight.</li>
+    <li><b>Evidence over assertion.</b> Fairness, performance, and compliance claims must be supported by retained, reproducible test artifacts.</li>
+    <li><b>Transparency to affected people.</b> Customers are told when they interact with AI and receive meaningful, specific reasons for adverse decisions.</li>
+  </ol>
+
+  <h3><span class="sn">4.0</span>Governance structure: three lines of defense</h3>
+  <table class="tight">
+    <tr><th style="width:190px">Body / role</th><th>Line</th><th>Responsibility</th></tr>
+    <tr><td><b>Board Risk Committee</b></td><td>Oversight</td><td>Approves this policy and AI risk appetite; receives quarterly AI risk reporting and all SEV-1 incident reports.</td></tr>
+    <tr><td><b>AI Governance Committee (AIGC)</b></td><td>1st/2nd joint</td><td>Cross-functional decision body (Risk, Legal, Compliance, Data, Technology, HR, Business). Approves Tier 1 deployments, waiver requests for Tier 2, and the inventory. Meets monthly; quorum requires Legal and second-line Risk.</td></tr>
+    <tr><td><b>System owners</b></td><td>1st line</td><td>Accountable executives for each inventoried system: budget, lifecycle compliance, monitoring response, condition closure.</td></tr>
+    <tr><td><b>AI Governance Office</b></td><td>1st line (enabling)</td><td>Runs intake, maintains the inventory and document suite, coordinates assessments, administers training.</td></tr>
+    <tr><td><b>Model Risk Management</b></td><td>2nd line</td><td>Independent validation and effective challenge per SR 11-7; owns the model risk register; can block deployment.</td></tr>
+    <tr><td><b>Compliance &amp; Fair Lending</b></td><td>2nd line</td><td>Regulatory mapping (ECOA/Reg B, UDAAP, GDPR, EU AI Act); sign-off gate for consumer-impacting systems.</td></tr>
+    <tr><td><b>Internal Audit</b></td><td>3rd line</td><td>Periodic independent audits of the AI program itself, including whether gates in §6 operate as designed.</td></tr>
+  </table>
+
+  <h3><span class="sn">5.0</span>Risk classification</h3>
+  <p>All systems are tiered at intake using the criteria in EMB-GOV-INV-001 §2.0 and re-tiered on any material change of purpose, population, or autonomy. EU AI Act classification is recorded alongside the internal tier; where the two diverge, the stricter control set applies. §5.1: a system absent from the inventory is an unauthorized system and is subject to immediate shutdown.</p>
+
+  <h3><span class="sn">6.0</span>Lifecycle requirements by tier</h3>
+  <table class="tight">
+    <tr><th>Gate</th><th>Tier 1</th><th>Tier 2</th><th>Tier 3</th></tr>
+    <tr><td>Intake classification</td><td>Required</td><td>Required</td><td>Required</td></tr>
+    <tr><td>Risk assessment</td><td>Full (RA template)</td><td>Streamlined</td><td>Self-attestation</td></tr>
+    <tr><td>Independent validation (MRM)</td><td>Required pre-deploy + annual</td><td>Risk-based</td><td>Not required</td></tr>
+    <tr><td>Fairness / disparate impact testing</td><td>Required if persons affected</td><td>Required if persons affected</td><td>N/A</td></tr>
+    <tr><td>Model card</td><td>Required, version-locked</td><td>Required (short form)</td><td>Optional</td></tr>
+    <tr><td>Human oversight design + effectiveness metric</td><td>Required</td><td>Required where customer-facing</td><td>Human reviews all output</td></tr>
+    <tr><td>Production monitoring plan</td><td>Required, wired to IRP</td><td>Required</td><td>Basic logging</td></tr>
+    <tr><td>Vendor AI due diligence</td><td>Full scorecard</td><td>Full scorecard</td><td>Standard procurement + AI addendum</td></tr>
+    <tr><td>Decommissioning record</td><td>Required</td><td>Required</td><td>Inventory update</td></tr>
+  </table>
+
+  <h3><span class="sn">7.0</span>Specific requirements</h3>
+  <h4>7.1 Prohibited uses</h4>
+  <ul>
+    <li>Social scoring of customers or employees; emotion inference in the workplace or in collections; biometric categorization by protected attributes (aligned to EU AI Act Article 5, applied bank-wide, not only in the EU).</li>
+    <li>Use of protected-class attributes, or knowing proxies for them, as decision features in consequential decisions, except as required for fairness testing itself.</li>
+    <li>Fully automated account closure or credit denial without a defined human appeal path.</li>
+  </ul>
+  <h4>7.2 Generative AI acceptable use</h4>
+  <ul>
+    <li>Only bank-approved GenAI tools may touch bank information; confidential or customer data may be entered only into tools on the approved register with enterprise data protections verified.</li>
+    <li>GenAI output used in customer communications, code, or analysis requires human review proportionate to impact; the reviewer is accountable for the output.</li>
+    <li>Customer-facing GenAI must disclose that it is AI (EU AI Act Art. 50) and must have an escalation path to a human.</li>
+  </ul>
+  <h4>7.3 Waivers and stop conditions</h4>
+  <p>Tier 2 and Tier 3 gate waivers may be granted by the AIGC with documented rationale and expiry. <b>Tier 1 gates may not be waived.</b> Any verified fairness floor breach, regulatory notice, or SEV-1 incident invokes the stop conditions in IRP-AI-001, including suspension of automated decisioning, regardless of business impact.</p>
+  <h4>7.4 Training and attestation</h4>
+  <p>Annual role-based training: all staff (awareness), system owners and developers (lifecycle obligations), AIGC members (regulatory horizon). Annual acceptable-use attestation is a condition of system access.</p>
+
+  <h3><span class="sn">8.0</span>ISO/IEC 42001 mapping</h3>
+  <table class="tight">
+    <tr><th>ISO/IEC 42001 element</th><th>Implemented by</th></tr>
+    <tr><td class="mono">Cl. 5 Leadership / AI policy</td><td>This policy; Board Risk Committee charter</td></tr>
+    <tr><td class="mono">Cl. 6 Planning / risk &amp; impact assessment</td><td>§5, §6; RA template (see EMB-RA-2026-014); AI impact assessment annex</td></tr>
+    <tr><td class="mono">Cl. 7 Support / competence</td><td>§7.4 training and attestation program</td></tr>
+    <tr><td class="mono">Cl. 8 Operation / lifecycle controls</td><td>§6 gate table; deployment registry; change management</td></tr>
+    <tr><td class="mono">Cl. 9 Performance evaluation</td><td>Monitoring plans; quarterly AIGC reporting; Internal Audit program</td></tr>
+    <tr><td class="mono">Cl. 10 Improvement / nonconformity</td><td>IRP-AI-001 post-incident reviews; condition tracking</td></tr>
+    <tr><td class="mono">A.4 AI system inventory · A.5 impact assessment · A.6 lifecycle data · A.10 third parties</td><td>EMB-GOV-INV-001; RA program; data governance file; vendor scorecard</td></tr>
+  </table>
+  <p class="muted">Mapping is maintained as the certification-readiness crosswalk; full control-by-control evidence index held by the AI Governance Office.</p>
+</section>
+<!-- ============ DOC-04 MODEL CARD ============ -->
+<section class="doc-section" id="d4">
+  <div class="control">
+    <div class="control-top">
+      <div>
+        <div class="org">Evergreen Mutual Bank · Model documentation</div>
+        <h2>Model Card · CreditSense v3.2</h2>
+      </div>
+      <div class="stamp">VERSION-LOCKED</div>
+    </div>
+    <div class="control-grid">
+      <div><span class="k">Document ID</span><span class="v">EMB-MC-CS-32</span></div>
+      <div><span class="k">Model version</span><span class="v">3.2.0 (2026-02-10)</span></div>
+      <div><span class="k">System ID</span><span class="v">AIS-001</span></div>
+      <div><span class="k">Tier</span><span class="v">Tier 1 / EU High-risk</span></div>
+      <div><span class="k">Owner</span><span class="v">VP Consumer Lending</span></div>
+      <div><span class="k">Validated by</span><span class="v">MRM 2026-02-28</span></div>
+      <div><span class="k">Risk assessment</span><span class="v">EMB-RA-2026-014</span></div>
+      <div><span class="k">Next regeneration</span><span class="v">On any minor release</span></div>
+    </div>
+  </div>
+
+  <h3><span class="sn">1.0</span>Model details</h3>
+  <table class="tight">
+    <tr><td style="width:220px"><b>Task</b></td><td>Binary default-risk classification (24-month horizon) with calibrated probability output, mapped to approve / refer / decline bands and initial line assignment by a separate policy-rule overlay.</td></tr>
+    <tr><td><b>Architecture</b></td><td>Gradient-boosted decision tree ensemble (1,200 trees, max depth 6), monotonic constraints applied to 14 financially intuitive features (e.g., risk may not decrease as delinquency count increases).</td></tr>
+    <tr><td><b>Features</b></td><td>87 inputs: bureau tradeline aggregates, inquiry velocity, internal deposit relationship signals, application attributes. No protected-class attributes. Three geography-derived features under constraint review (RA condition C-2).</td></tr>
+    <tr><td><b>Developed by</b></td><td>In-house Data Science, Consumer Lending pod. Training pipeline version-controlled; model registry entry <span class="mono">reg://creditsense/3.2.0</span>.</td></tr>
+    <tr><td><b>Decision authority</b></td><td>Auto-approve and auto-decline within score bands; mid-band routes to human refer queue (≈ 18% of volume). Appeal path available for all declines.</td></tr>
+  </table>
+
+  <h3><span class="sn">2.0</span>Intended use and out-of-scope use</h3>
+  <p><b>Intended:</b> initial credit decisioning for unsecured personal loans and credit cards for applicants aged 18+ in US and EU (Ireland) markets, on application volumes resembling the training population.</p>
+  <ul>
+    <li><b>Out of scope:</b> credit line increases on existing accounts (separate model), small business lending, collections treatment, employment or tenant screening of any kind, and marketing eligibility.</li>
+    <li><b>Known unsuitability:</b> thin-file applicants with fewer than two tradelines receive degraded discrimination (section 4); these route to the refer queue by policy rule, not by model confidence alone.</li>
+  </ul>
+
+  <h3><span class="sn">3.0</span>Training data</h3>
+  <ul>
+    <li><b>Corpus:</b> 1.42M historical applications, 2019-01 through 2024-09, with 24-month performance outcomes. Synthetic data is not used.</li>
+    <li><b>Exclusions:</b> COVID forbearance-period outcomes (2020-04 to 2021-06) reweighted to avoid learning emergency-policy artifacts; fraud-confirmed applications removed; withdrawn applications excluded from the label set.</li>
+    <li><b>Reject inference:</b> performance of declined applicants estimated via bureau-observed proxy outcomes; method and its limits documented in the validation report.</li>
+    <li><b>Data governance:</b> sources, lineage, retention, and quality thresholds recorded in the catalog and the EU AI Act Article 10 data file. Protected-class data used only in segregated fairness-testing storage with access controls.</li>
+  </ul>
+
+  <h3><span class="sn">4.0</span>Performance</h3>
+  <table class="tight">
+    <tr><th>Segment</th><th>AUC</th><th>KS</th><th>Calibration (Brier)</th><th>Note</th></tr>
+    <tr><td>Overall holdout (2024 vintage)</td><td class="mono">0.842</td><td class="mono">0.51</td><td class="mono">0.071</td><td>Meets MRM acceptance (AUC ≥ 0.80)</td></tr>
+    <tr><td>Thick file (≥ 5 tradelines)</td><td class="mono">0.856</td><td class="mono">0.54</td><td class="mono">0.066</td><td></td></tr>
+    <tr><td>Thin file (&lt; 2 tradelines)</td><td class="mono">0.781</td><td class="mono">0.42</td><td class="mono">0.089</td><td>Below threshold: mandatory refer routing</td></tr>
+    <tr><td>EU (Ireland) book</td><td class="mono">0.829</td><td class="mono">0.49</td><td class="mono">0.075</td><td>Monitored separately; smaller volume</td></tr>
+    <tr><td>Challenger (logistic benchmark)</td><td class="mono">0.811</td><td class="mono">0.46</td><td class="mono">0.078</td><td>v3.2 lift justifies complexity per SR 11-7 review</td></tr>
+  </table>
+
+  <h3><span class="sn">5.0</span>Fairness evaluation</h3>
+  <p>Tested quarterly by the AI Governance Office using the bank's fairness audit methodology. Latest run: 2026-Q1, personal loan product, approval outcome.</p>
+  <table class="tight">
+    <tr><th>Metric</th><th>Definition</th><th>Threshold</th><th>2026-Q1 result</th><th>Status</th></tr>
+    <tr><td>Disparate impact ratio</td><td>Selection-rate ratio vs. reference group (4/5ths rule basis)</td><td class="mono">≥ 0.80 floor · ≥ 0.90 internal trigger</td><td class="mono">min 0.91 across groups</td><td><span class="pill t-low">Pass</span></td></tr>
+    <tr><td>Equal opportunity difference</td><td>TPR gap for creditworthy applicants across groups</td><td class="mono">|Δ| ≤ 0.05</td><td class="mono">max |Δ| 0.032</td><td><span class="pill t-low">Pass</span></td></tr>
+    <tr><td>Calibration parity</td><td>Predicted vs. realized default by group, by decile</td><td class="mono">No group &gt; 1.5pp systematic gap</td><td class="mono">max gap 0.9pp</td><td><span class="pill t-low">Pass</span></td></tr>
+  </table>
+  <div class="note amber"><b>Honest caveat, retained on purpose.</b> One geography-derived feature shows residual correlation with race after controls (flagged in RA-2026-014, condition C-2, due 2026-08-29). Passing aggregate metrics does not close that finding; the feature is constrained pending the deep dive, and this card will be regenerated when C-2 closes.</div>
+
+  <h3><span class="sn">6.0</span>Explainability and adverse action</h3>
+  <p>Per-decision SHAP attributions are computed at scoring time and mapped to a controlled vocabulary of 28 Reg B-compatible reason codes. The top four negative contributors populate the adverse action notice. A fidelity test in the release pipeline verifies that stated reasons track actual score drivers (R-09 control). Top decline reasons in production: <span class="mono">serious delinquency history</span>, <span class="mono">high revolving utilization</span>, <span class="mono">insufficient credit history length</span>, <span class="mono">recent inquiry velocity</span>.</p>
+
+  <h3><span class="sn">7.0</span>Monitoring and retraining</h3>
+  <ul>
+    <li><b>Drift:</b> PSI on top-20 features; alert &gt; 0.10, action &gt; 0.25 with auto-escalation to IRP-AI-001 playbook PB-3.</li>
+    <li><b>Performance:</b> monthly segment AUC and approval-rate dashboards to the AIGC; vintage curves quarterly.</li>
+    <li><b>Fairness:</b> quarterly audit as above; any sub-0.80 DIR result invokes playbook PB-2 same day.</li>
+    <li><b>Retraining:</b> scheduled annually or on action-level drift; every retrain repeats the full Tier 1 gate sequence in POL-AI-001 §6. No silent refreshes.</li>
+  </ul>
+
+  <h3><span class="sn">8.0</span>Version history</h3>
+  <table class="tight">
+    <tr><th>Version</th><th>Date</th><th>Change</th></tr>
+    <tr><td class="mono">3.2.0</td><td class="mono">2026-02-10</td><td>Feature pipeline hardening; monotonic constraints extended; reason-code vocabulary v4.</td></tr>
+    <tr><td class="mono">3.1.0</td><td class="mono">2025-09-02</td><td>Retrain on 2024 vintages; thin-file refer rule added.</td></tr>
+    <tr><td class="mono">3.0.0</td><td class="mono">2025-08-01</td><td>Replaced retired v2.x (AIS-X03) after validation findings on thin-file instability.</td></tr>
+  </table>
+</section>
+<!-- ============ DOC-05 INCIDENT RESPONSE PLAN ============ -->
+<section class="doc-section" id="d5">
+  <div class="control">
+    <div class="control-top">
+      <div>
+        <div class="org">Evergreen Mutual Bank · AI Governance Office</div>
+        <h2>AI Incident Response Plan</h2>
+      </div>
+      <div class="stamp">TESTED 2026-05-12</div>
+    </div>
+    <div class="control-grid">
+      <div><span class="k">Document ID</span><span class="v">EMB-IRP-AI-001</span></div>
+      <div><span class="k">Version</span><span class="v">2.3</span></div>
+      <div><span class="k">Owner</span><span class="v">AI Risk Manager</span></div>
+      <div><span class="k">Approver</span><span class="v">CRO + CISO</span></div>
+      <div><span class="k">Relationship</span><span class="v">Annex to enterprise IRP</span></div>
+      <div><span class="k">Last tabletop</span><span class="v">2026-05-12 (PB-5)</span></div>
+      <div><span class="k">Review cycle</span><span class="v">Annual + post-incident</span></div>
+      <div><span class="k">Policy basis</span><span class="v">POL-AI-001 §7.3</span></div>
+    </div>
+  </div>
+
+  <h3><span class="sn">1.0</span>Purpose and relationship to enterprise IR</h3>
+  <p>AI systems fail differently from conventional software: they can be fully operational and still cause harm through biased, drifting, fabricated, or manipulated outputs. This plan defines what counts as an AI incident, how severity is assigned, who has authority to suspend a system, and which regulatory clocks start when. It is an annex to the enterprise incident response plan; security incidents with an AI dimension run under the CISO with this plan's AI workstream attached.</p>
+
+  <h3><span class="sn">2.0</span>What counts as an AI incident</h3>
+  <table class="tight">
+    <tr><th style="width:170px">Category</th><th>Examples</th></tr>
+    <tr><td><b>Discriminatory outcome</b></td><td>Fairness metric floor breach; pattern of complaints indicating disparate treatment; regulator inquiry into decisioning.</td></tr>
+    <tr><td><b>Harmful or wrong output</b></td><td>Chatbot gives incorrect account, fee, or hardship guidance; adverse action notices contain wrong reasons; agent executes an unintended action.</td></tr>
+    <tr><td><b>Performance / drift breach</b></td><td>Action-level PSI; segment AUC below MRM floor; calibration failure shifting approval rates materially.</td></tr>
+    <tr><td><b>AI security event</b></td><td>Prompt injection against Aria or OpsAgent; model or training-data exfiltration; adversarial manipulation of inputs (R-06).</td></tr>
+    <tr><td><b>Data incident via AI</b></td><td>Customer PII exposed in model output or logs; unapproved data entering a GenAI tool.</td></tr>
+    <tr><td><b>Vendor model event</b></td><td>Provider silently changes or deprecates a model version underlying a production system; vendor breach affecting our data.</td></tr>
+  </table>
+
+  <h3><span class="sn">3.0</span>Severity matrix and response standard</h3>
+  <table class="tight">
+    <tr><th>Severity</th><th>Definition (any one criterion)</th><th>Acknowledge</th><th>Command</th></tr>
+    <tr><td><span class="pill t-crit">SEV-1</span></td><td>Verified discriminatory decisioning at scale; ongoing customer financial harm; EU AI Act "serious incident" criteria plausibly met; regulator-reportable event.</td><td class="mono">15 min</td><td>Incident Commander + CRO; Board Risk Cmte. notified ≤ 24h</td></tr>
+    <tr><td><span class="pill t-high">SEV-2</span></td><td>Fairness internal trigger breached (not floor); material wrong-output pattern caught before customer harm; action-level drift on a Tier 1 system.</td><td class="mono">1 h</td><td>Incident Commander + system owner</td></tr>
+    <tr><td><span class="pill t-med">SEV-3</span></td><td>Contained single-instance harmful output; alert-level drift; control failure with compensating control held.</td><td class="mono">1 business day</td><td>System owner, AI Gov Office tracking</td></tr>
+    <tr><td><span class="pill t-low">SEV-4</span></td><td>Near miss or hygiene finding worth recording.</td><td class="mono">5 business days</td><td>Logged; themed quarterly</td></tr>
+  </table>
+
+  <h3><span class="sn">4.0</span>Roles and suspension authority</h3>
+  <ul>
+    <li><b>Incident Commander (IC):</b> AI Risk Manager or delegate; runs the bridge, owns the timeline record, decides severity changes.</li>
+    <li><b>Suspension authority:</b> the IC, the CRO, the system owner, or the on-call MRM lead may each unilaterally suspend automated decisioning or trigger an agent kill switch. <b>No one may veto a suspension; only the AIGC may authorize reactivation.</b> Asymmetry is deliberate: turning a system off requires one person, turning it back on requires the committee.</li>
+    <li><b>Workstreams:</b> Communications (customer + internal), Legal/Regulatory (notification clocks, privilege), Engineering (containment, forensics, rollback), Remediation (affected-customer identification and make-whole).</li>
+  </ul>
+
+  <h3><span class="sn">5.0</span>Response lifecycle</h3>
+  <ol>
+    <li><b>Detect:</b> monitoring thresholds (drift, fairness, fidelity), complaint-pattern surveillance, staff reporting channel, vendor notifications. Every Tier 1 monitoring breach auto-opens a ticket; humans triage, machines never close.</li>
+    <li><b>Triage and classify:</b> severity per §3; preserve model version, feature snapshots, decision logs, and prompts/outputs before any change (evidence first, fixes second).</li>
+    <li><b>Contain:</b> options in order of preference: route affected segment to human decisioning, tighten policy-rule overlay, suspend automated decisioning, full system suspension / kill switch. Containment for decisioning systems means stopping new harm while keeping customers served by humans.</li>
+    <li><b>Investigate:</b> root cause across data, model, deployment, and oversight layers; MRM joins for any Tier 1 system.</li>
+    <li><b>Remediate and make whole:</b> fix root cause; re-run affected decisions where feasible; for credit incidents, re-decision harmed applicants and correct bureau furnishing.</li>
+    <li><b>Notify:</b> per §6 clocks; customer notification drafted with Legal but written in plain language.</li>
+    <li><b>Post-incident review:</b> blameless PIR within 10 business days for SEV-1/2; actions tracked to closure by the AIGC; this plan and relevant model cards updated (ISO 42001 Cl. 10).</li>
+  </ol>
+
+  <h3><span class="sn">6.0</span>Regulatory notification clocks</h3>
+  <table class="tight">
+    <tr><th>Regime</th><th>Trigger</th><th>Clock</th><th>Owner</th></tr>
+    <tr><td>EU AI Act Art. 73</td><td>Serious incident involving a high-risk system in the EU</td><td class="mono">Immediately, ≤ 15 days (≤ 10 days if death; ≤ 2 days for widespread infringement or critical infrastructure disruption)</td><td>EU Compliance Officer</td></tr>
+    <tr><td>GDPR Art. 33/34</td><td>Personal data breach via AI system</td><td class="mono">DPA ≤ 72 h; data subjects without undue delay if high risk</td><td>DPO</td></tr>
+    <tr><td>US prudential regulators</td><td>Material model failure, consumer harm event, or reportable cyber incident</td><td class="mono">Per supervisory expectations; computer-security incidents ≤ 36 h to primary federal regulator</td><td>Chief Compliance Officer</td></tr>
+    <tr><td>Consumer protection (ECOA/Reg B, UDAAP)</td><td>Pattern of inaccurate adverse action or discriminatory decisioning</td><td class="mono">Counsel-directed; remediation file maintained from day one</td><td>Fair Lending Counsel</td></tr>
+  </table>
+  <p class="muted">Legal owns the determination; the IC owns making sure the determination question is asked within the first hour, not after containment.</p>
+
+  <h3><span class="sn">7.0</span>Playbooks (maintained as annexes)</h3>
+  <table class="tight">
+    <tr><th>ID</th><th>Scenario</th><th>First moves</th></tr>
+    <tr><td class="mono">PB-1</td><td>Chatbot harmful guidance</td><td>Pull cited KB articles; constrain Aria to deflection mode; sample transcripts for blast radius.</td></tr>
+    <tr><td class="mono">PB-2</td><td>Fairness floor breach (Tier 1 decisioning)</td><td>Same-day suspension of automated decisioning for affected product; preserve quarter's decision log; open remediation population analysis. Non-discretionary per RA-2026-014 §6.</td></tr>
+    <tr><td class="mono">PB-3</td><td>Action-level drift on CreditSense</td><td>Freeze retrains; expand refer-band; segment analysis vs. v2.x failure signature.</td></tr>
+    <tr><td class="mono">PB-4</td><td>Prompt injection / AI security</td><td>Run under CISO; revoke agent tool credentials; capture adversarial inputs.</td></tr>
+    <tr><td class="mono">PB-5</td><td>Agent unintended action (OpsAgent)</td><td>Kill switch; reconcile action audit log against intended scope; reverse transactions. <span class="muted">Tabletop-tested 2026-05-12; mean time to kill: 4 min.</span></td></tr>
+    <tr><td class="mono">PB-6</td><td>Vendor silently swaps underlying model</td><td>Pin last verified version if possible; invoke contract change-notification clause; re-run acceptance evals before re-enabling.</td></tr>
+  </table>
+
+  <h3><span class="sn">8.0</span>Exercise program</h3>
+  <p>Two tabletop exercises per year, rotating playbooks, with at least one exercise annually involving the AIGC and one involving Communications and Legal on the notification decision. Findings feed the PIR action tracker. An untested incident plan is a hypothesis; this one is exercised.</p>
+</section>
+
+</div>
+  </div>
+</main>
+</div>
+
+<script>
+(function(){
+  const titles = {
+    intro:'Suite overview',
+    d1:'DOC-01 · AI System Inventory',
+    d2:'DOC-02 · AI Risk Assessment · CreditSense',
+    d3:'DOC-03 · Enterprise AI Policy',
+    d4:'DOC-04 · Model Card · CreditSense v3.2',
+    d5:'DOC-05 · AI Incident Response Plan'
+  };
+  const crumb = document.getElementById('crumb');
+  function show(id){
+    document.querySelectorAll('.doc-section').forEach(s=>s.classList.toggle('visible', s.id===id));
+    document.querySelectorAll('.doc-link').forEach(b=>b.classList.toggle('active', b.dataset.doc===id));
+    crumb.innerHTML = '<b>EMB-GOV</b> / ' + titles[id];
+    window.scrollTo({top:0});
+    if(history.replaceState) history.replaceState(null,'','#'+id);
+  }
+  document.querySelectorAll('[data-doc]').forEach(el=>{
+    el.addEventListener('click', ()=>show(el.dataset.doc));
+    el.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();show(el.dataset.doc);} });
+  });
+  const h = location.hash.replace('#','');
+  if(titles[h]) show(h);
+})();
+</script>
+</body>
+</html>

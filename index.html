@@ -68,6 +68,7 @@
     .proto-number { font-family: 'Space Mono', monospace; font-size: 11px; color: #334155; letter-spacing: .1em; }
     .proto-status { font-family: 'Space Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 3px; letter-spacing: .06em; }
     .status-live { background: #052e16; color: #4ade80; border: 1px solid #14532d; }
+    .status-doc { background: #2a1d08; color: #fbbf24; border: 1px solid #5c3d0c; }
     .proto-name { font-size: 18px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
     .proto-desc { font-size: 13px; color: #94a3b8; line-height: 1.6; margin-bottom: 18px; flex: 1; }
     .proto-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
@@ -141,7 +142,7 @@
   <div class="nav-links">
     <a href="#about">About</a>
     <a href="#governance">Governance Tools</a>
-    <a href="#products">AI Products</a>
+    <a href="#analysis">Analysis</a>
     <a href="#frameworks">Frameworks</a>
     <a href="#contact">Contact</a>
   </div>
@@ -344,6 +345,57 @@
         <span class="proto-tag">Contractual Controls</span>
       </div>
       <a href="vendor-risk-scorecard.html" class="proto-link">Launch Tool →</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ANALYSIS -->
+<section class="section" id="analysis">
+  <div class="section-header">
+    <div class="section-tag">Governance Work Product</div>
+    <div class="section-title">Analysis &amp; Documents</div>
+    <div class="section-sub">The tools show the controls running. These show the paper behind them: a full governance document suite for one fictional bank, and a dissection of a real public AI failure mapped against that program.</div>
+  </div>
+
+  <div class="proto-grid">
+    <div class="proto-card">
+      <div class="proto-card-top">
+        <span class="proto-number">DOCUMENT SUITE</span>
+        <span class="proto-status status-doc">5 DOCUMENTS</span>
+      </div>
+      <div class="proto-name">AI Governance Document Suite</div>
+      <div class="proto-desc">
+        The operating documents of an AI governance program for Evergreen Mutual Bank, a fictional US bank with an EU subsidiary. One high-risk credit model is traced through the system inventory, risk assessment, Board-approved AI policy, model card, and incident response plan. The documents cross-reference each other the way a real program does.
+      </div>
+      <div class="proto-tags">
+        <span class="proto-tag">NIST AI RMF</span>
+        <span class="proto-tag">EU AI Act</span>
+        <span class="proto-tag">ISO/IEC 42001</span>
+        <span class="proto-tag">SR 11-7</span>
+        <span class="proto-tag">ECOA / Reg B</span>
+      </div>
+      <a href="governance-document-suite.html" class="proto-link">Read the Suite →</a>
+    </div>
+
+    <div class="proto-card">
+      <div class="proto-card-top">
+        <span class="proto-number">DISSECTION 01</span>
+        <span class="proto-status status-doc">CASE STUDY</span>
+      </div>
+      <div class="proto-name">The Dutch Childcare Benefits Scandal</div>
+      <div class="proto-desc">
+        Known in the Netherlands as the Toeslagenaffaire: a risk classifier that used nationality, about 26,000 families wrongly flagged as fraudsters, a cabinet resignation, and a 2.75 million euro fine. Each root failure is mapped to the specific control in my program that exists to catch it, plus what that program still would have missed.
+      </div>
+      <div class="proto-tags">
+        <span class="proto-tag">Incident Analysis</span>
+        <span class="proto-tag">Public Sector AI</span>
+        <span class="proto-tag">Algorithmic Bias</span>
+        <span class="proto-tag">GDPR</span>
+        <span class="proto-tag">EU AI Act</span>
+      </div>
+      <a href="dissection-01-toeslagenaffaire.html" class="proto-link">Read the Dissection →</a>
     </div>
   </div>
 </section>
